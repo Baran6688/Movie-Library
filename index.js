@@ -3,6 +3,8 @@ const app = express()
 const path = require("path")
 const db = require("./db")
 const authRoutes = require("./routes/authRoutes")
+
+require("dotenv").config()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
