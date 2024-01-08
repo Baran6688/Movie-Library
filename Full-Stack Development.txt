@@ -1,0 +1,30 @@
+Full-Stack Development Project: Movies Library  Application
+
+Objective:
+Develop a full-stack web application using Node.js and SQL for the backend, and HTML, CSS, and JavaScript for the front end. Additionally, create a mobile application using Flutter.
+
+Project Overview:
+Build a 'Movie Library' application that allows users to browse, search, add, update, and delete detailed movie information. The application should have both a web-based interface and a mobile application with consistent functionality.
+
+Requirements:
+
+Backend:
+Use Node.js for backend development.
+Employ a SQL database (such as SQLite) to store movie data.
+Design RESTful API endpoints for CRUD operations on movie data.
+
+Movie Data Attributes:
+Each movie entry should include the following details:
+Movie: Title, Description, Release Year, Genre, Director(s)
+Cast: List of actors, including their name, age, and country of origin.
+Likes: A count of how many users have liked the movie.
+Comments: User-generated comments about the movie.
+Ensure the database schema accommodates these details efficiently.
+
+Frontend (Web):
+Implement the frontend with HTML, CSS, and JavaScript.
+Enable interaction with backend services using AJAX or Fetch API.
+Features should include viewing movie details, adding new movies, editing existing movies, deleting movies, liking movies, and viewing/adding comments.
+
+Mobile Application (Flutter):
+Develop a Flutter-based mobile application with similar capabilities as the web interface.
