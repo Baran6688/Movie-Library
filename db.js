@@ -28,6 +28,11 @@ function createDatabaseConnection(config) {
 			return this._executeQuery(query)
 		},
 
+		async deleteOne(table, id) {
+			const query = `DELETE FROM ${table} WHERE id=${id}`
+			return this._executeQuery(query)
+		},
+
 		async _executeQuery(query) {
 			return new Promise(resolve => {
 				con.query(query, (err, results) => {

@@ -10,48 +10,58 @@
 
 <body>
     <span id="message" hidden>Not Found Movie!</span>
-    <main id="main">
-        <h1></h1>
-        <h2>Directed By:</h2>
-        <p>Description:</p>
-        <section>
-            <span>Actors</span>
-            <p>
+    <main>
+        <div id="main">
 
-            </p>
-        </section>
+            <h1></h1>
+            <h2>Directed By:</h2>
+            <p>Description:</p>
+            <section>
+                <span>Actors</span>
+                <p>
 
+                </p>
+            </section>
+        </div>
+        <button id="deletebtn">Delete</button>
     </main>
+
 
 
     <script>
         const movieId = window.location.pathname.split('/').at(-1)
         const message = document.getElementById("message")
         const main = document.getElementById("main")
+        const deleteBtn = document.getElementById("deletebtn")
 
         async function getMovie() {
             const res = await fetch("/api/movies/" + movieId)
             if (!res.ok) {
                 message.removeAttribute("hidden")
                 main.setAttribute("hidden", true)
+                deleteBtn.setAttribute("hidden", true)
                 return
             }
             const { data } = await res.json()
-            console.log(data)
             main.innerHTML = `
             <h1>${data.title}</h1>
             <h2>Directed By:${data.director}</h2>
             <p>Description:${data.description}</p>
-            <section>
-                <p>
-                Actors:
-                ${data.actors_list}
-            </p>
-            </section>
+            <section><p>Actors:${data.actors_list}</p></section>
             `
         }
 
         getMovie()
+
+
+
+        async function onDelete() {
+            const res = await fetch(`/api/movies/${movieId}`, { method: "DELETE" })
+            if (res.ok) window.location.href = "/movies"
+        }
+
+
+        deleteBtn.addEventListener("click", onDelete)
 
 
     </script>

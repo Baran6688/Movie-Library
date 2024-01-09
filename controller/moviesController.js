@@ -4,7 +4,6 @@ const path = require("path")
 
 module.exports.showMovie = (req, res) => {
 	const { id } = req.params
-	console.log(id)
 	res
 		.type("html")
 		.status(200)
@@ -76,4 +75,12 @@ module.exports.addMovie = catchAsync(async (req, res, next) => {
 	res
 		.status(200)
 		.json({ message: "successfully added new movie!", id: movie_id })
+})
+
+module.exports.deleteMovie = catchAsync(async (req, res, next) => {
+	const { id } = req.params
+	const something = await db.deleteOne("movies", id)
+	console.log("GOT DELETE", id)
+	console.log("SOMETHING: ", something)
+	res.status(200).json({ data: "DELETED" })
 })
