@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+
+<body>
+    <form id="loginForm">
+        <h1>Register</h1>
+        <span id="message"></span>
+        <br>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username">
+        <label for="password">Password</label>
+        <input type="text" id="password" name="password">
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+
+        const message = document.getElementById("message")
+        const loginForm = document.getElementById("loginForm")
+
+
+
+        async function onSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            })
+
+            const json = await res.json()
+            console.log(json)
+            if (!res.ok) return message.innerText = json.message
+
+            message.setAttribute("hidden", true)
+            window.location.href = "/movies";
+        }
+
+        loginForm.addEventListener("submit", onSubmit)
+    </script>
+</body>
+
+</html>

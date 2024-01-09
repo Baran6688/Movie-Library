@@ -1,33 +1,21 @@
 const db = require("../db")
 const catchAsync = require("../utils/catchAsync")
-const path = require("path")
+const renderHtml = require("../utils/renderHtml")
 
 module.exports.showMovie = (req, res) => {
-	res
-		.type("html")
-		.status(200)
-		.sendFile("views/movieDetails.html", { root: path.join(__dirname, "../") })
+	renderHtml("movieDetails", res)
 }
 
 module.exports.showUpdateMovie = (req, res) => {
-	res
-		.type("html")
-		.status(200)
-		.sendFile("views/updateMovie.html", { root: path.join(__dirname, "../") })
+	renderHtml("updateMovie", res)
 }
 
 module.exports.showHome = (req, res) => {
-	res
-		.type("html")
-		.status(200)
-		.sendFile("views/movies.html", { root: path.join(__dirname, "../") })
+	renderHtml("movies", res)
 }
 
 module.exports.showNewMovie = (req, res) => {
-	res
-		.type("html")
-		.status(200)
-		.sendFile("views/newMovie.html", { root: path.join(__dirname, "../") })
+	renderHtml("newMovie", res)
 }
 
 module.exports.getAllMovies = catchAsync(async (req, res, next) => {

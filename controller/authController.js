@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs")
 const db = require("../db")
 const catchAsync = require("../utils/catchAsync")
 const jwt = require("jsonwebtoken")
-const path = require("path")
+const renderHtml = require("../utils/renderHtml")
 
 function generateAndSendToken(id, res) {
 	const token = jwt.sign({ id }, process.env.SECRET, {
@@ -14,21 +14,23 @@ function generateAndSendToken(id, res) {
 }
 
 module.exports.showLogin = (req, res) => {
-	res
-		.type("html")
-		.status(200)
-		.sendFile("views/login.html", { root: path.join(__dirname, "../") })
+	renderHtml("login", res)
+}
+
+module.exports.showRegister = (req, res) => {
+	renderHtml("register", res)
 }
 
 module.exports.register = catchAsync(async (req, res, next) => {
 	const { username, password } = req.body
 	if (!username || !password) return next(new Error("Cannot do it"))
+
 	const hashedPassword = await bcrypt.hash(password, 12)
-	const [result, error] = await db.insert("users", {
+	const [{ insertId }, error] = await db.insert("users", {
 		username: username,
 		password: hashedPassword,
 	})
-	res.status(200).json({ result })
+	generateAndSendToken(insertId, res)
 })
 
 module.exports.login = catchAsync(async (req, res, next) => {
