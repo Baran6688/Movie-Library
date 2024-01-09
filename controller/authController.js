@@ -33,8 +33,10 @@ module.exports.login = catchAsync(async (req, res, next) => {
 })
 
 module.exports.protect = catchAsync(async (req, res, next) => {
-	const token = req.headers.authorization.split(" ")[1]
+	const token = req.headers?.authorization?.split(" ")[1]
+	if (!token) return next(new Error("Not Authenticated!"))
 	const { id } = jwt.verify(token, process.env.SECRET)
+	if (!id) return next(new Error("not found ID!"))
 	const [[user], error] = await db.find("users", `id='${id}'`)
 	if (!user) return next(new Error("User does not exist!"))
 	req.user = user
