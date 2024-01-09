@@ -18,6 +18,13 @@ module.exports.showHome = (req, res) => {
 		.sendFile("views/movies.html", { root: path.join(__dirname, "../") })
 }
 
+module.exports.showNewMovie = (req, res) => {
+	res
+		.type("html")
+		.status(200)
+		.sendFile("views/newMovie.html", { root: path.join(__dirname, "../") })
+}
+
 module.exports.getAllMovies = catchAsync(async (req, res, next) => {
 	const [movies, error] = await db.findAll("movies")
 	if (error) return next(new Error(error))
@@ -56,13 +63,17 @@ module.exports.findMovie = catchAsync(async (req, res, next) => {
 })
 
 module.exports.addMovie = catchAsync(async (req, res, next) => {
-	const { title, description, release_year, genre, director } = req.body
-	await db.insert("movies", {
+	const { title, description, release_year, genre, director, actor_id } =
+		req.body
+	const [{ insertId: movie_id }] = await db.insert("movies", {
 		title,
 		description,
 		release_year,
 		genre,
 		director,
 	})
-	res.status(200).json({ message: "successfully added new movie!" })
+	await db.insert("movie_actor", { actor_id, movie_id })
+	res
+		.status(200)
+		.json({ message: "successfully added new movie!", id: movie_id })
 })

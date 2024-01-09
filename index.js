@@ -38,8 +38,8 @@ app.use(cookieParser())
 app.use("/api/auth", authApi)
 app.use("/auth", authRoutes)
 
-app.use("/movies", moviesRoutes)
 app.use("/api/movies", moviesApi)
+app.use("/movies", moviesRoutes)
 // ---
 
 // Catch all Undefined Routes
