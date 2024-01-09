@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie</title>
+</head>
+
+<body>
+    <span id="message" hidden>Not Found Movie!</span>
+    <main id="main">
+        <h1></h1>
+        <h2>Directed By:</h2>
+        <p>Description:</p>
+        <section>
+            <span>Actors</span>
+            <p>
+
+            </p>
+        </section>
+
+    </main>
+
+
+    <script>
+        const movieId = window.location.pathname.split('/').at(-1)
+        const message = document.getElementById("message")
+        const main = document.getElementById("main")
+
+        async function getMovie() {
+            const res = await fetch("/movies/" + movieId)
+            if (!res.ok) {
+                message.removeAttribute("hidden")
+                main.setAttribute("hidden", true)
+                return
+            }
+            const { data } = await res.json()
+            console.log(data)
+            main.innerHTML = `
+            <h1>${data.title}</h1>
+            <h2>Directed By:${data.director}</h2>
+            <p>Description:${data.description}</p>
+            <section>
+                <p>
+                Actors:
+                ${data.actors_list}
+            </p>
+            </section>
+            `
+        }
+
+        getMovie()
+
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,5 +1,22 @@
 const db = require("../db")
 const catchAsync = require("../utils/catchAsync")
+const path = require("path")
+
+module.exports.showMovie = (req, res) => {
+	const { id } = req.params
+	console.log(id)
+	res
+		.type("html")
+		.status(200)
+		.sendFile("views/movieDetails.html", { root: path.join(__dirname, "../") })
+}
+
+module.exports.showHome = (req, res) => {
+	res
+		.type("html")
+		.status(200)
+		.sendFile("views/movies.html", { root: path.join(__dirname, "../") })
+}
 
 module.exports.getAllMovies = catchAsync(async (req, res, next) => {
 	const [movies, error] = await db.findAll("movies")
@@ -9,13 +26,13 @@ module.exports.getAllMovies = catchAsync(async (req, res, next) => {
 
 module.exports.getOneMovie = catchAsync(async (req, res, next) => {
 	const { id } = req.params
-	const [movie, error] = await db._executeQuery(
+	const [[movie], error] = await db._executeQuery(
 		`SELECT
     movies.title,
     movies.release_year,
 	movies.description,
 	movies.director,
-    GROUP_CONCAT(CONCAT(actors.id, ':', actors.name, ' from ',actors.country) ORDER BY actors.id SEPARATOR ', ') AS actors_list
+    GROUP_CONCAT(CONCAT(actors.name, ' from ',actors.country) ORDER BY actors.id SEPARATOR ', ') AS actors_list
 	FROM
 		movies
 	LEFT JOIN
@@ -25,6 +42,8 @@ module.exports.getOneMovie = catchAsync(async (req, res, next) => {
 	WHERE
 		movies.id = ${id};`
 	)
+
+	if (!movie || !movie.title) return next(new Error("Not Found any movies!"))
 
 	res.status(200).json({ data: movie })
 })

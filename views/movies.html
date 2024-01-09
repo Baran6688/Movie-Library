@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Welcome to our Home!</h1>
+    <main>
+        <table border="1" style="border-collapse: collapse;">
+            <thead>
+                <th>id</th>
+                <th>title</th>
+                <th>director</th>
+                <th>release year</th>
+                <th>link</th>
+            </thead>
+            <tbody id="moviesList">
+            </tbody>
+        </table>
+
+    </main>
+
+
+
+
+    <script>
+        const moviesList = document.getElementById("moviesList")
+
+        async function getMovies() {
+            const res = await fetch("/movies");
+            if (!res.ok) throw new Error("Something went wrong..");
+            const { data } = await res.json();
+            data.forEach(el => {
+                moviesList.innerHTML += `<tr>
+                    <td>${el.id}</td>
+                    <td>${el.title}</td>
+                    <td>${el.director}</td>
+                    <td>${el.release_year}</td>
+                    <td><a href="/movies/pages/movie/${el.id}">Open</a></td>
+                    </tr>`;
+            });
+        }
+        getMovies()
+    </script>
+</body>
+
+</html>

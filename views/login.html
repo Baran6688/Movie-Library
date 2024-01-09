@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+
+<body>
+    <h1>Sign In</h1>
+    <form id="loginForm">
+        <span id="message" hidden> Error </span>
+        <br>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username">
+        <label for="password">Password</label>
+        <input type="text" id="password" name="password">
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+
+        const message = document.getElementById("message")
+        const loginForm = document.getElementById("loginForm")
+        async function onSubmit(event) {
+            event.preventDefault(); // Prevents the default form submission
+
+            // Get form values
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const res = await fetch("/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            })
+            const json = await res.json()
+            console.log(json)
+
+
+            if (!res.ok) {
+                message.removeAttribute("hidden")
+                message.innerText = json.message
+            }
+            message.setAttribute("hidden", true)
+            localStorage.setItem("token", json.token)
+            window.location.href = "/movies/pages/home";
+        }
+
+        loginForm.addEventListener("submit", onSubmit)
+    </script>
+</body>
+
+</html>
