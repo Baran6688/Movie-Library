@@ -4,6 +4,7 @@ const {
 	showHome,
 	showMovie,
 	showNewMovie,
+	showUpdateMovie,
 } = require("../controller/moviesController")
 const authController = require("../controller/authController")
 
@@ -12,7 +13,7 @@ router.use(authController.protect)
 
 // Finish Them
 router.get("/new", showNewMovie)
-router.get("/update")
+router.get("/update/:id", showUpdateMovie)
 
 // Showing Pages in HTML
 router.get("/", showHome)

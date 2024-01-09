@@ -33,6 +33,16 @@ function createDatabaseConnection(config) {
 			return this._executeQuery(query)
 		},
 
+		async updateOne(table, fields, id) {
+			const query = `UPDATE ${table}
+			SET
+				${fields}
+			WHERE
+				id =${id};`
+
+			return this._executeQuery(query)
+		},
+
 		async _executeQuery(query) {
 			return new Promise(resolve => {
 				con.query(query, (err, results) => {

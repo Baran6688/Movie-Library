@@ -47,8 +47,16 @@
             <h1>${data.title}</h1>
             <h2>Directed By:${data.director}</h2>
             <p>Description:${data.description}</p>
-            <section><p>Actors:${data.actors_list}</p></section>
+            <span>Genre: ${data.genre}</span>
+            <section>
+                Actors:
+                <ul id='list'></ul>
+            </section>
+            <a href="/movies/update/${movieId}">Update Movie!</a>
             `
+            const actors = JSON.parse(data.actors_list)
+            const list = document.getElementById("list")
+            actors.forEach(el => { list.innerHTML += `<li>${el.name} from ${el.country} </li>` });
         }
 
         getMovie()

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie</title>
+</head>
+
+<body>
+    <span id="message" hidden>Not Found Movie!</span>
+    <form id="updateForm">
+        <div id="main">
+            <label for="title">Title</label>
+            <input id="title" type="text" name="title">
+            <br>
+            <label for="director">Director</label>
+            <input id="director" type="text" name="director">
+            <br>
+            <label for="release_year">Release Year</label>
+            <input id="release_year" type="text" name="release_year">
+            <br>
+            <label for="genre">Genre</label>
+            <input id="genre" type="text" name="genre">
+            <br>
+            <label for="actor">Actor ID</label>
+            <input type="text" id="actor" name="actor_id">
+            <br>
+            <label for="description" valu>Description</label>
+            <br>
+            <textarea name="description" id="description" cols="30" rows="5"></textarea>
+            <br>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+
+
+    <script>
+        const movieId = window.location.pathname.split('/').at(-1)
+        const message = document.getElementById("message")
+        const main = document.getElementById("main")
+        const updateForm = document.getElementById("updateForm")
+        async function getMovie() {
+            const res = await fetch("/api/movies/" + movieId)
+            if (!res.ok) {
+                message.removeAttribute("hidden")
+                main.setAttribute("hidden", true)
+                deleteBtn.setAttribute("hidden", true)
+                return
+            }
+            const { data } = await res.json()
+            main.innerHTML = `
+            <label for="title">Title</label>
+            <input id="title" type="text" name="title" value="${data.title}">
+            <br>
+            <label for="director">Director</label>
+            <input id="director" type="text" name="director" value="${data.director}">
+            <br>
+            <label for="release_year">Release Year</label>
+            <input id="release_year" type="text" name="release_year" value="${data.release_year}">
+            <br>
+            <label for="genre">Genre</label>
+            <input id="genre" type="text" name="genre" value="${data.genre}">
+            <br>
+        
+            <label for="description" valu>Description</label>
+            <br>
+            <textarea name="description" id="description" cols="30" rows="5">${data.description}
+            </textarea>
+            <br>
+                `
+        }
+
+
+        getMovie()
+
+
+        async function onUpdate(e) {
+
+            e.preventDefault()
+            const formData = Object.fromEntries(new FormData(updateForm));
+            const res = await fetch(`/api/movies/${movieId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+
+            })
+            if (res.ok) window.location.href = `/movies/${movieId}`
+        }
+
+        updateForm.addEventListener("submit", onUpdate)
+
+    </script>
+
+
+</body>
+
+</html>

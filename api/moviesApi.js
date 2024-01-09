@@ -6,6 +6,7 @@ const {
 	addMovie,
 	getOneMovie,
 	deleteMovie,
+	updateMovie,
 } = require("../controller/moviesController")
 const authController = require("../controller/authController")
 
@@ -20,7 +21,7 @@ router.get("/search", findMovie)
 // READ | DELETE | UPDATE
 router.get("/:id", getOneMovie)
 router.delete("/:id", deleteMovie)
-router.put("/:id")
+router.put("/:id", updateMovie)
 
 // ADD LIKE | ADD COMMENT
 router.patch("/like/:id")
