@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Movies</title>
 </head>
 
 <body>
@@ -32,7 +32,7 @@
         const moviesList = document.getElementById("moviesList")
 
         async function getMovies() {
-            const res = await fetch("/movies");
+            const res = await fetch("/api/movies");
             if (!res.ok) throw new Error("Something went wrong..");
             const { data } = await res.json();
             data.forEach(el => {
@@ -41,7 +41,7 @@
                     <td>${el.title}</td>
                     <td>${el.director}</td>
                     <td>${el.release_year}</td>
-                    <td><a href="/movies/pages/movie/${el.id}">Open</a></td>
+                    <td><a href="/movies/${el.id}">Open</a></td>
                     </tr>`;
             });
         }

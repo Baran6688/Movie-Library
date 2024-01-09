@@ -9,9 +9,9 @@
 </head>
 
 <body>
-    <h1>Sign In</h1>
     <form id="loginForm">
-        <span id="message" hidden> Error </span>
+        <h1>Sign In</h1>
+        <span id="message"></span>
         <br>
         <label for="username">Username</label>
         <input type="text" id="username" name="username">
@@ -24,30 +24,26 @@
 
         const message = document.getElementById("message")
         const loginForm = document.getElementById("loginForm")
-        async function onSubmit(event) {
-            event.preventDefault(); // Prevents the default form submission
 
-            // Get form values
+
+
+        async function onSubmit(event) {
+            event.preventDefault();
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            const res = await fetch("/auth/login", {
+
+            const res = await fetch("/api/auth/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
             })
+
             const json = await res.json()
             console.log(json)
+            if (!res.ok) return message.innerText = json.message
 
-
-            if (!res.ok) {
-                message.removeAttribute("hidden")
-                message.innerText = json.message
-            }
             message.setAttribute("hidden", true)
-            localStorage.setItem("token", json.token)
-            window.location.href = "/movies/pages/home";
+            window.location.href = "/movies";
         }
 
         loginForm.addEventListener("submit", onSubmit)

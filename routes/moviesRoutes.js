@@ -1,21 +1,17 @@
 const express = require("express")
 const router = express.Router()
-const {
-	getAllMovies,
-	findMovie,
-	addMovie,
-	getOneMovie,
-	showHome,
-	showMovie,
-} = require("../controller/moviesController")
+const { showHome, showMovie } = require("../controller/moviesController")
 const authController = require("../controller/authController")
 
+// Protecting Routes
 router.use(authController.protect)
-router.get("/pages/home", showHome)
-router.get("/pages/movie/:id", showMovie)
-router.get("/:id", getOneMovie)
-router.get("/", getAllMovies)
-router.get("/search", findMovie)
-router.post("/", addMovie)
+
+// Showing Pages in HTML
+router.get("/", showHome)
+router.get("/:id", showMovie)
+
+// Finish Them
+router.get("/new")
+router.get("/update")
 
 module.exports = router

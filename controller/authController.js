@@ -47,9 +47,8 @@ module.exports.protect = catchAsync(async (req, res, next) => {
 	const tokenFromCookies = req.cookies?.token
 
 	const token = tokenFromHeaders || tokenFromCookies
-
-	// if (!token) return next(new Error("Not Authenticated!"))
 	if (!token) res.redirect("/auth/login")
+
 	const { id } = jwt.verify(token, process.env.SECRET)
 	if (!id) return next(new Error("not found ID!"))
 	const [[user], error] = await db.find("users", `id='${id}'`)

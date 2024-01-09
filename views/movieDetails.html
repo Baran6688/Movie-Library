@@ -30,7 +30,7 @@
         const main = document.getElementById("main")
 
         async function getMovie() {
-            const res = await fetch("/movies/" + movieId)
+            const res = await fetch("/api/movies/" + movieId)
             if (!res.ok) {
                 message.removeAttribute("hidden")
                 main.setAttribute("hidden", true)
