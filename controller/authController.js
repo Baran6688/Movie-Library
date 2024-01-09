@@ -4,10 +4,11 @@ const catchAsync = require("../utils/catchAsync")
 const jwt = require("jsonwebtoken")
 
 function generateAndSendToken(id, res) {
-	const token = jwt.sign({ id: user.id }, process.env.SECRET, {
+	const token = jwt.sign({ id }, process.env.SECRET, {
 		expiresIn: "10d",
 	})
-	res.status(200).json({ user, error, isCorrect, token })
+	if (!token) throw new Error("Some thing went Wrong!")
+	res.status(200).json({ token })
 }
 
 module.exports.register = catchAsync(async (req, res, next) => {
@@ -26,6 +27,7 @@ module.exports.login = catchAsync(async (req, res, next) => {
 	if (!username || !password) return next(new Error("Cannot do it"))
 
 	const [[user], error] = await db.find("users", `username='${username}'`)
+	// if (!user) return next(new Error("incorrect username or password"))
 	const isCorrect = await bcrypt.compare(password, user.password)
 
 	if (!isCorrect) return next(new Error("Password is not correct!"))

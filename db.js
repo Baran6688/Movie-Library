@@ -46,7 +46,7 @@ const db = createDatabaseConnection({
 	host: "127.0.0.1",
 	user: "root",
 	password: "1234",
-	database: "mysql",
+	database: "movie_database",
 })
 
 module.exports = db
