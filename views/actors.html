@@ -5,11 +5,50 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Actors</title>
 </head>
 
 <body>
+    <main>
+        <span>
+            to add new new actor
+            <a href="/actors/new">click here</a>
+        </span>
+        <table border="1" style="border-collapse: collapse;">
+            <thead>
+                <th>id</th>
+                <th>name</th>
+                <th>country</th>
+                <th>birth</th>
+                <th>link</th>
+            </thead>
+            <tbody id="moviesList">
+            </tbody>
+        </table>
 
+    </main>
+
+
+    <script>
+        const moviesList = document.getElementById("moviesList")
+
+
+        async function getActors(url = "/api/actors") {
+            const res = await fetch(url);
+            const { data } = await res.json();
+            moviesList.innerHTML = ""
+            data?.forEach(el => {
+                moviesList.innerHTML += `<tr>
+                    <td>${el.id}</td>
+                    <td>${el.name}</td>
+                    <td>${el.country}</td>
+                    <td>${new Date(el.birth).toLocaleDateString()}</td>
+                    <td><a href="/actors/${el.id}">Open</a></td>
+                    </tr>`;
+            });
+        }
+        getActors()
+    </script>
 </body>
 
 </html>

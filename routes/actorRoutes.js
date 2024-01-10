@@ -2,6 +2,7 @@ const express = require("express")
 const {
 	showActorProfile,
 	showActorForm,
+	showAllActors,
 } = require("../controller/actorController")
 const router = express.Router()
 const authController = require("../controller/authController")
@@ -10,7 +11,7 @@ const authController = require("../controller/authController")
 router.use(authController.protect)
 
 // GET All Actors
-router.get("/")
+router.get("/", showAllActors)
 
 // Get NEW Actor Form
 router.get("/new", showActorForm)

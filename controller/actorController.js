@@ -6,12 +6,12 @@ module.exports.showActorProfile = (req, res, next) => {
 	renderHtml("actorProfile", res)
 }
 
-module.exports = (req, res, next) => {
+module.exports.showAllActors = (req, res) => {
 	renderHtml("actors", res)
 }
 
-module.exports.showActorForm = (req, res, next) => {
-	renderHtml("newActor")
+module.exports.showActorForm = (req, res) => {
+	renderHtml("newActor", res)
 }
 
 module.exports.getAllActors = catchAsync(async (req, res, next) => {
