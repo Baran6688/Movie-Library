@@ -82,7 +82,7 @@
             `
             const actors = JSON.parse(data.actors_list)
             const list = document.getElementById("actorList")
-            actors.forEach(el => { list.innerHTML += `<li>${el.name} from ${el.country} </li>` });
+            actors?.forEach(el => { list.innerHTML += `<li>${el.name} from ${el.country} </li>` });
 
             renderComments(JSON.parse(data.comments), user)
         }
@@ -103,7 +103,7 @@
 
         // Rendering Comments Trigger
         function renderComments(comments, user) {
-            comments.forEach(el => {
+            comments?.forEach(el => {
                 if (!el.username) return
                 if (el.user_id === user.id)
                     return commentList.innerHTML += `<li>you said "${el.content}" <button onclick="onDeleteComment(${el.id})">Delete</button> </li>`

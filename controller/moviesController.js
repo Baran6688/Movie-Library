@@ -139,8 +139,8 @@ module.exports.getMovieActors = catchAsync(async (req, res, next) => {
 		 ORDER BY actors.id
 		 `
 	)
-	const title = result[0].title
-	const actors = result.map(actor => {
+	const title = result[0]?.title
+	const actors = result?.map(actor => {
 		return {
 			id: actor.actor_id,
 			name: actor.name,

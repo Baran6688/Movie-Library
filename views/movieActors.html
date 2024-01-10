@@ -68,7 +68,7 @@
         if (!res.ok) return head.innerText = "Movie Not Found!"
         const { title, actors } = await res.json()
         head.innerText += " from " + title
-        actors.forEach(actor => {
+        actors?.forEach(actor => {
             actorRows.innerHTML += `
             <tr>
                 <td>${actor.id}</td>
