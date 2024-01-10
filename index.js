@@ -11,6 +11,8 @@ const authRoutes = require("./routes/authRoutes")
 const authApi = require("./api/authApi")
 const moviesRoutes = require("./routes/moviesRoutes")
 const moviesApi = require("./api/moviesApi")
+const actorRoutes = require("./routes/actorRoutes")
+const actorApi = require("./api/actorApi")
 
 // Middleware
 app.use((req, res, next) => {
@@ -40,6 +42,9 @@ app.use("/auth", authRoutes)
 
 app.use("/api/movies", moviesApi)
 app.use("/movies", moviesRoutes)
+
+app.use("/api/actors", actorApi)
+app.use("/actors", actorRoutes)
 // ---
 
 // Catch all Undefined Routes

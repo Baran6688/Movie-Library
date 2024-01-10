@@ -85,8 +85,6 @@ module.exports.findMovie = catchAsync(async (req, res, next) => {
 		`,
 		`title LIKE '%${value}%' OR director LIKE '%${value}%' OR name LIKE '%${value}%' GROUP BY movies.id`
 	)
-	console.log(movie)
-	// console.log("search result: ", movie, error)
 	if (error) return next(new Error(error))
 	res.json({ data: movie })
 })
