@@ -10,6 +10,12 @@
 
 <body>
     <h1>Welcome!</h1>
+    <form id="searchForm">
+        <label for="searchInput">Search:</label>
+        <input type="text" id="searchInput" placeholder="search by title, director, year">
+        <button>Submit</button>
+        <button hidden type="reset" id="resetBtn">reset</button>
+    </form>
     <main>
         <span>
             to add new new movie
@@ -34,12 +40,35 @@
 
     <script>
         const moviesList = document.getElementById("moviesList")
+        const searchForm = document.getElementById("searchForm")
+        const resetBtn = document.getElementById("resetBtn")
 
-        async function getMovies() {
-            const res = await fetch("/api/movies");
-            if (!res.ok) throw new Error("Something went wrong..");
+
+
+
+        // SEARCH FUNCTIONALITY
+        searchForm.addEventListener("submit", onSubmit)
+        resetBtn.addEventListener("click", onReset)
+
+
+        async function onSubmit(e) {
+            e.preventDefault()
+            const searchInput = document.getElementById("searchInput").value
+            resetBtn.removeAttribute("hidden")
+            getMovies(`/api/movies/search?value=${searchInput}`)
+        }
+        function onReset() {
+            resetBtn.setAttribute("hidden", true)
+            getMovies()
+        }
+
+        //      =====================================================
+
+        async function getMovies(url = "/api/movies") {
+            const res = await fetch(url);
             const { data } = await res.json();
-            data.forEach(el => {
+            moviesList.innerHTML = ""
+            data?.forEach(el => {
                 moviesList.innerHTML += `<tr>
                     <td>${el.id}</td>
                     <td>${el.title}</td>

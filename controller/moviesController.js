@@ -77,8 +77,16 @@ module.exports.getOneMovie = catchAsync(async (req, res, next) => {
 })
 
 module.exports.findMovie = catchAsync(async (req, res, next) => {
-	const { title } = req.query
-	const [movie, error] = await db.find("movies", `title LIKE '%${title}%'`)
+	const { value } = req.query
+	const [movie, error] = await db.find(
+		`movies
+		LEFT JOIN movie_actor ON movie_actor.movie_id = movies.id
+		LEFT JOIN actors ON movie_actor.actor_id = actors.id
+		`,
+		`title LIKE '%${value}%' OR director LIKE '%${value}%' OR name LIKE '%${value}%' GROUP BY movies.id`
+	)
+	console.log(movie)
+	// console.log("search result: ", movie, error)
 	if (error) return next(new Error(error))
 	res.json({ data: movie })
 })
