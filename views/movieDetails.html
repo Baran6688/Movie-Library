@@ -54,8 +54,6 @@
         const likesBox = document.getElementById("likesBox")
 
 
-
-
         // First Page Opened
         getMovie()
 
@@ -82,7 +80,7 @@
             `
             const actors = JSON.parse(data.actors_list)
             const list = document.getElementById("actorList")
-            actors?.forEach(el => { list.innerHTML += `<li>${el.name} from ${el.country} </li>` });
+            actors?.forEach(el => { list.innerHTML += `<li> <a href="/actors/${el.id}"> ${el.name}</a> from ${el.country}  </li>` });
 
             renderComments(JSON.parse(data.comments), user)
         }
@@ -139,7 +137,7 @@
         async function getLikes() {
             const res = await fetch(`/api/movies/${movieId}/likes`)
             const { likes, isLiked } = await res.json()
-            if (isLiked) return likesBox.innerHTML = `<button onclick="deleteLike()">Unlike</button> <span>you and ${likes.length - 1} other has liked this movie</span>`
+            if (isLiked) return likesBox.innerHTML = `<button onclick="deleteLike()">Unlike</button> <span>the movie has ${likes.length} like(s) </span>`
 
             likesBox.innerHTML = `<button onclick="addLike()">Like</button> <span>${likes.length} people has liked this movie</span>`
         }

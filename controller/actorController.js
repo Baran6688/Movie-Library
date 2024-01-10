@@ -36,3 +36,16 @@ module.exports.deleteOneActor = catchAsync(async (req, res, next) => {
 	const [result, error] = await db.deleteOne("actors", id)
 	res.status(200).json({ message: "done" })
 })
+
+module.exports.getActorMovies = catchAsync(async (req, res, next) => {
+	const { id: actor_id } = req.params
+
+	const [result, error] = await db._executeQuery(`
+	SELECT * FROM movie_actor
+	LEFT JOIN movies ON movies.id = movie_actor.movie_id
+	WHERE actor_id = ${actor_id}
+	`)
+
+	console.log(result)
+	res.status(200).json({ data: result })
+})

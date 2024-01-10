@@ -9,7 +9,78 @@
 </head>
 
 <body>
+    <span id="message" hidden>Not Found Movie!</span>
+    <main id="main">
+        <div id="filmDiv">
+            <h1></h1>
+            <h2>Directed By:</h2>
+            <p>Description:</p>
+            <section>
+                <span>Actors</span>
+                <p></p>
+            </section>
+        </div>
 
+
+        <button id="deletebtn">Delete</button>
+
+    </main>
 </body>
+
+
+<script>
+
+
+    // First Page Opened
+    const actorId = window.location.pathname.split('/').at(-1)
+    const message = document.getElementById("message")
+    const main = document.getElementById("main")
+    const deleteBtn = document.getElementById("deletebtn")
+    const filmDiv = document.getElementById("filmDiv")
+    getMovie()
+
+    async function getMovie() {
+        const res = await fetch("/api/actors/" + actorId)
+        if (!res.ok) {
+            message.removeAttribute("hidden")
+            main.setAttribute("hidden", true)
+            deleteBtn.setAttribute("hidden", true)
+            return
+        }
+
+        const { data } = await res.json()
+        filmDiv.innerHTML = `
+            <h1>${data.name}</h1>
+            <h2>Nation:${data.country}</h2>
+            <p>Birth:${new Date(data.birth).toLocaleDateString()}</p>
+            <section>
+                Movies:
+                <ul id='movieList'></ul>
+            </section>
+            `
+
+    }
+
+
+
+    // The Actor Movies
+    fetchMovies()
+
+    async function fetchMovies() {
+        const res = await fetch(`/api/actors/${actorId}/movies`)
+        const { data } = await res.json()
+        const movieList = document.getElementById("movieList")
+
+        data.forEach(movie => {
+            movieList.innerHTML += `
+            <li> <a href="/movies/${movie.movie_id}"> ${movie.title} </a> </li>
+            `
+        });
+    }
+
+
+    
+
+</script>
 
 </html>
