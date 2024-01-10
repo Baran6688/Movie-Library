@@ -42,7 +42,6 @@
             })
             if (!res.ok) window.location = "/actors/new"
             const data = await res.json()
-            console.log(data)
             const { id } = await res.json()
             window.location.href = `/actors/${id}`;
         }

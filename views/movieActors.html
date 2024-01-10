@@ -47,7 +47,6 @@
 
     async function addActor(e) {
         const actor_id = document.getElementById("newActor").value
-        console.log(actor_id)
 
         e.preventDefault()
         const res = await fetch(`/api/movies/${movieId}/actors`, {

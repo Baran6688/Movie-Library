@@ -21,7 +21,6 @@ module.exports.getAllActors = catchAsync(async (req, res, next) => {
 
 module.exports.addActor = catchAsync(async (req, res, next) => {
 	const { name, birth, country } = req.body
-	console.log(req.body)
 
 	const [{ insertId: actor_id }, err] = await db.insert("actors", {
 		name,
@@ -53,6 +52,5 @@ module.exports.getActorMovies = catchAsync(async (req, res, next) => {
 	WHERE actor_id = ${actor_id}
 	`)
 
-	console.log(result)
 	res.status(200).json({ data: result })
 })
