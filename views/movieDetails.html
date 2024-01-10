@@ -10,26 +10,35 @@
 
 <body>
     <span id="message" hidden>Not Found Movie!</span>
-    <main>
-        <div id="main">
-
+    <main id="main">
+        <div id="filmDiv">
             <h1></h1>
             <h2>Directed By:</h2>
             <p>Description:</p>
             <section>
                 <span>Actors</span>
-                <p>
-
-                </p>
+                <p></p>
             </section>
         </div>
-        <button id="deletebtn">Delete</button>
+
 
         <section>
+            <div id="likesBox">
+                <button>Like</button>
+                <span>thies movie has _ likes</span>
+            </div>
+        </section>
+        <button id="deletebtn">Delete</button>
+        <section>
+
             <h2>Comments</h2>
+            <label for="">Write a comment:</label>
+            <input type="text" placeholder="content" name="content" id="content">
+            <button id="commentSubmit">submit</button>
             <ul id="commentList">
             </ul>
         </section>
+
     </main>
 
 
@@ -39,6 +48,16 @@
         const message = document.getElementById("message")
         const main = document.getElementById("main")
         const deleteBtn = document.getElementById("deletebtn")
+        const filmDiv = document.getElementById("filmDiv")
+        const commentList = document.getElementById("commentList")
+        const commentSubmit = document.getElementById("commentSubmit")
+        const likesBox = document.getElementById("likesBox")
+
+
+
+
+        // First Page Opened
+        getMovie()
 
         async function getMovie() {
             const res = await fetch("/api/movies/" + movieId)
@@ -49,33 +68,29 @@
                 return
             }
             const { data, user } = await res.json()
-            main.innerHTML = `
+            filmDiv.innerHTML = `
             <h1>${data.title}</h1>
             <h2>Directed By:${data.director}</h2>
             <p>Description:${data.description}</p>
             <span>Genre: ${data.genre}</span>
             <section>
                 Actors:
-                <ul id='list'></ul>
+                <ul id='actorList'></ul>
             </section>
             <a href="/movies/${movieId}/actors" >Manage Actors</a>
             <a href="/movies/update/${movieId}">Update Movie!</a>
             `
             const actors = JSON.parse(data.actors_list)
-            const list = document.getElementById("list")
+            const list = document.getElementById("actorList")
             actors.forEach(el => { list.innerHTML += `<li>${el.name} from ${el.country} </li>` });
-            const comments = JSON.parse(data.comments)
-            const commentList = document.getElementById("commentList")
-            comments.forEach(el => {
-                if (el.username === user.username) return commentList.innerHTML += `<li>you said "${el.content}" </li>`
 
-                commentList.innerHTML += `<li>${el.username} says "${el.content}"</li>`
-            })
+            renderComments(JSON.parse(data.comments), user)
         }
 
-        getMovie()
 
 
+        // Delete Movie
+        deleteBtn.addEventListener("click", onDelete)
 
         async function onDelete() {
             const res = await fetch(`/api/movies/${movieId}`, { method: "DELETE" })
@@ -83,7 +98,66 @@
         }
 
 
-        deleteBtn.addEventListener("click", onDelete)
+        // Comment Parts
+        commentSubmit.addEventListener("click", onAddComment)
+
+        // Rendering Comments Trigger
+        function renderComments(comments, user) {
+            comments.forEach(el => {
+                if (!el.username) return
+                if (el.user_id === user.id)
+                    return commentList.innerHTML += `<li>you said "${el.content}" <button onclick="onDeleteComment(${el.id})">Delete</button> </li>`
+                commentList.innerHTML += `<li>${el.username} says "${el.content}"</li>`
+            })
+        }
+
+
+
+        // Add Comment
+        async function onAddComment() {
+            const content = document.getElementById("content").value
+            if (!content) return
+            const res = await fetch(`/api/movies/comments/${movieId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content })
+            })
+            if (!res.ok) return
+            const { data, user } = await res.json()
+            renderComments([data], user)
+        }
+
+        // Delete Comment
+        async function onDeleteComment(id) {
+            const res = await fetch(`/api/movies/comments/${id}`, { method: "DELETE" })
+            if (res.ok) window.location.reload()
+        }
+
+
+        // GET LIKES
+        getLikes()
+        async function getLikes() {
+            const res = await fetch(`/api/movies/${movieId}/likes`)
+            const { likes, isLiked } = await res.json()
+            if (isLiked) return likesBox.innerHTML = `<button onclick="deleteLike()">Unlike</button> <span>you and ${likes.length - 1} other has liked this movie</span>`
+
+            likesBox.innerHTML = `<button onclick="addLike()">Like</button> <span>${likes.length} people has liked this movie</span>`
+        }
+
+        // ADD LIKE
+        async function addLike() {
+            const res = await fetch(`/api/movies/${movieId}/likes`, { method: "POST" })
+            const json = await res.json()
+            getLikes()
+        }
+
+        // REMOVE LIKE
+        async function deleteLike() {
+            const res = await fetch(`/api/movies/${movieId}/likes`, { method: "DELETE" })
+            const json = await res.json()
+            getLikes()
+        }
+
 
 
     </script>

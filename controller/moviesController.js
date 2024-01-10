@@ -37,38 +37,42 @@ module.exports.getOneMovie = catchAsync(async (req, res, next) => {
 		movies.description,
 		movies.genre,
 		movies.director,
-		JSON_ARRAYAGG(
-			JSON_OBJECT(
-				'id', actors.id,
-				'name', actors.name,
-				'country', actors.country
-			) 
-			ORDER BY actors.id
-		) AS actors_list,
+		actors_list,
 		JSON_ARRAYAGG(
 			JSON_OBJECT(
 				'id', comments.id,
 				'content', comments.content,
-				'username', users.username
+				'username', users.username,
+				'user_id', users.id
 			)
-		) as comments
-
+		) AS comments
 		FROM
-			movies
-		LEFT JOIN
-			movie_actor ON movies.id = movie_actor.movie_id
+		movies
+		LEFT JOIN (
+		SELECT
+			movie_id,
+			JSON_ARRAYAGG(
+				JSON_OBJECT(
+					'id', actors.id,
+					'name', actors.name,
+					'country', actors.country
+				) 
+			) AS actors_list
+		FROM
+			movie_actor
 		LEFT JOIN
 			actors ON movie_actor.actor_id = actors.id
+		GROUP BY movie_id
+		) AS actor_agg ON movies.id = actor_agg.movie_id
 		LEFT JOIN
 			comments ON comments.movie_id = movies.id
-	    LEFT JOIN 
+		LEFT JOIN 
 			users ON comments.user_id = users.id
 		WHERE
-			movies.id = ${id};`
+			movies.id = ${id}
+		GROUP BY movies.id;`
 	)
-	console.log(req.user)
 	if (!movie || !movie.title) return next(new Error("Not Found any movies!"))
-
 	res.status(200).json({ data: movie, user: req.user })
 })
 
@@ -127,7 +131,6 @@ module.exports.getMovieActors = catchAsync(async (req, res, next) => {
 		 ORDER BY actors.id
 		 `
 	)
-	console.log(result)
 	const title = result[0].title
 	const actors = result.map(actor => {
 		return {
@@ -157,4 +160,64 @@ module.exports.deleteActorFromMovie = catchAsync(async (req, res) => {
 	const { id } = req.params
 	await db.deleteOne("movie_actor", id)
 	res.status(200).json({ message: "Successfully Deleted!" })
+})
+
+module.exports.addCommentToMovie = catchAsync(async (req, res, next) => {
+	const user_id = req.user.id
+	const { content } = req.body
+	const movie_id = req.params.id
+	if (!req.user || !content) return next(new Error("Cannot add comment."))
+	const [{ insertId: comment_id }, error] = await db.insert("comments", {
+		movie_id,
+		user_id,
+		content,
+	})
+
+	res.status(200).json({
+		data: {
+			id: comment_id,
+			content,
+			user_id: req.user.id,
+			username: req.user.username,
+		},
+		user: req.user,
+	})
+})
+
+module.exports.deleteComment = catchAsync(async (req, res, next) => {
+	const { id } = req.params
+	const [[comment], error] = await db.find("comments", id)
+	if (comment.user_id !== req.user.id) return next(new Error("Not Authorized"))
+	const result = await db.deleteOne("comments", comment.id)
+	res.status(200).json({ data: "OK" })
+})
+
+module.exports.getLikes = catchAsync(async (req, res, next) => {
+	const { id: movie_id } = req.params
+	const [likes, error] =
+		await db._executeQuery(`select user_id, likes.id AS like_id from likes 
+		LEFT JOIN users 
+		ON likes.user_id = users.id
+		WHERE likes.movie_id = ${movie_id}
+		GROUP BY user_id;
+	`)
+	const isLiked =
+		likes.filter(like => like.user_id === req.user.id).length > 0 ? true : false
+	res.status(200).json({ likes, isLiked })
+})
+
+module.exports.addLike = catchAsync(async (req, res, next) => {
+	const { id: movie_id } = req.params
+	const { id: user_id } = req.user
+	const [{ insertId }, error] = await db.insert("likes", { movie_id, user_id })
+
+	res.status(200).json({ insertId })
+})
+module.exports.deleteLike = catchAsync(async (req, res, next) => {
+	const { id: movie_id } = req.params
+	const { id: user_id } = req.user
+	const comment_id = `${movie_id}${user_id}`
+	const [{ insertId }, error] = await db.deleteOne("likes", comment_id)
+
+	res.status(200).json({ insertId })
 })
