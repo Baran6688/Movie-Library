@@ -5,10 +5,51 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>New Actor</title>
 </head>
 
 <body>
+    <h1>New Actor</h1>
+    <form id="actorForm">
+        <label>Name: </label>
+        <input type="text" name="name" placeholder="Acotors' Name" required>
+        <br>
+        <br>
+        <label>Country: </label>
+        <input type="text" name="country" placeholder="Actors' Nation" required>
+        <br>
+        <br>
+        <label>Birth: </label>
+        <input type="date" value="2000-01-01" name="birth" required>
+        <br>
+        <br>
+        <button>Submit</button>
+    </form>
+
+
+
+    <script>
+        const formEl = document.getElementById("actorForm");
+
+        async function onSubmit(e) {
+            e.preventDefault()
+            let formData = Object.fromEntries(new FormData(formEl));
+            formData = { ...formData, birth: new Date(formData.birth).toISOString().split("T")[0] }
+            const res = await fetch("/api/actors", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            if (!res.ok) window.location = "/actors/new"
+            const data = await res.json()
+            console.log(data)
+            const { id } = await res.json()
+            window.location.href = `/actors/${id}`;
+        }
+
+
+        formEl.addEventListener("submit", onSubmit)
+    </script>
 
 </body>
 

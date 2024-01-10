@@ -21,8 +21,15 @@ module.exports.getAllActors = catchAsync(async (req, res, next) => {
 
 module.exports.addActor = catchAsync(async (req, res, next) => {
 	const { name, birth, country } = req.body
-	const [{ insertId }, __] = await db.insert("actors", { name, birth, country })
-	res.status(200).json({ insertId, message: "done" })
+	console.log(req.body)
+
+	const [{ insertId: actor_id }, err] = await db.insert("actors", {
+		name,
+		birth,
+		country,
+	})
+	if (err) return next(new Error("Cannot insert!"))
+	res.status(200).json({ actor_id, message: "done" })
 })
 
 module.exports.getOneActor = catchAsync(async (req, res, next) => {
