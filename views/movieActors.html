@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actors</title>
+</head>
+
+<body>
+    <h1 id="head">Actors</h1>
+
+    <form id="newForm">
+        <span id="errorm" hidden>Sorry, cannot add the actor!</span>
+        <br>
+        <label>Add actor</label>
+        <input type="text" placeholder="write actor id here" id="newActor">
+        <button>Submit</button>
+    </form>
+    <hr>
+
+    <table border=1 style="border-collapse: collapse;">
+        <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Birth</th>
+            <th>Country</th>
+            <th>EID</th>
+        </thead>
+        <tbody id="rows">
+
+        </tbody>
+
+    </table>
+
+
+</body>
+
+<script>
+    const actorRows = document.getElementById("rows")
+    const head = document.getElementById("head")
+    const movieId = window.location.pathname.split('/').at(-2)
+    const actorForm = document.getElementById("newForm")
+    const errorm = document.getElementById("errorm")
+
+
+    async function addActor(e) {
+        const actor_id = document.getElementById("newActor").value
+        console.log(actor_id)
+
+        e.preventDefault()
+        const res = await fetch(`/api/movies/${movieId}/actors`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ actor_id })
+        })
+        if (!res.ok) return errorm.removeAttribute("hidden")
+        errorm.setAttribute("hidden", true)
+        window.location.reload()
+    }
+
+    actorForm.addEventListener("submit", addActor)
+
+
+    async function getActors() {
+        const res = await fetch(`/api/movies/${movieId}/actors`)
+        if (!res.ok) return head.innerText = "Movie Not Found!"
+        const { title, actors } = await res.json()
+        head.innerText += " from " + title
+        actors.forEach(actor => {
+            actorRows.innerHTML += `
+            <tr>
+                <td>${actor.id}</td>
+                <td>${actor.name}</td>
+                <td>${new Date(actor.birth).toLocaleDateString()}</td>
+                <td>${actor.country}</td>
+                <td> <button onclick="deleteActor(${actor.entry_id})">  delete</button></td>
+            </tr>
+            `
+        });
+
+    }
+
+    async function deleteActor(id) {
+        const deleted = await fetch(`/api/movies/${id}/actors`, { method: "DELETE" })
+        window.location.reload()
+    }
+
+    getActors()
+</script>
+
+</html>

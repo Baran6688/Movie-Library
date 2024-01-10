@@ -18,6 +18,10 @@ module.exports.showNewMovie = (req, res) => {
 	renderHtml("newMovie", res)
 }
 
+module.exports.showMovieActors = (req, res) => {
+	renderHtml("movieActors", res)
+}
+
 module.exports.getAllMovies = catchAsync(async (req, res, next) => {
 	const [movies, error] = await db.findAll("movies")
 	if (error) return next(new Error(error))
@@ -81,9 +85,7 @@ module.exports.addMovie = catchAsync(async (req, res, next) => {
 
 module.exports.deleteMovie = catchAsync(async (req, res, next) => {
 	const { id } = req.params
-	const something = await db.deleteOne("movies", id)
-	console.log("GOT DELETE", id)
-	console.log("SOMETHING: ", something)
+	await db.deleteOne("movies", id)
 	res.status(200).json({ data: "DELETED" })
 })
 
@@ -101,4 +103,45 @@ module.exports.updateMovie = catchAsync(async (req, res, next) => {
 	)
 	if (error) return next(new Error("Something went wrong.."))
 	res.status(200).json({ message: "Successfull Updated!" })
+})
+
+module.exports.getMovieActors = catchAsync(async (req, res, next) => {
+	const { id } = req.params
+	const [result, error] = await db._executeQuery(
+		`SELECT movies.title, movie_actor.actor_id, actors.name, actors.country, movie_actor.id as entry_id, actors.birth FROM movies
+		 JOIN movie_actor ON movies.id = movie_actor.movie_id
+		 JOIN actors ON actors.id = movie_actor.actor_id 
+		 WHERE movies.id=${id}
+		 ORDER BY actors.id
+		 `
+	)
+	const title = result[0].title
+	const actors = result.map(actor => {
+		return {
+			id: actor.actor_id,
+			name: actor.name,
+			birth: actor.birth,
+			country: actor.country,
+			entry_id: actor.entry_id,
+		}
+	})
+
+	res.status(200).json({ actors, title })
+})
+
+module.exports.addActorToMovie = catchAsync(async (req, res, next) => {
+	const { id: movie_id } = req.params
+	const { actor_id } = req.body
+	const [{ insertId }, error] = await db.insert("movie_actor", {
+		actor_id: actor_id,
+		movie_id: movie_id,
+	})
+	if (error) return next(new Error("Not Found!"))
+	res.status(200).json({ message: "Successfully Added an actor!", insertId })
+})
+
+module.exports.deleteActorFromMovie = catchAsync(async (req, res) => {
+	const { id } = req.params
+	await db.deleteOne("movie_actor", id)
+	res.status(200).json({ message: "Successfully Deleted!" })
 })

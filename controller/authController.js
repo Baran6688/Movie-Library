@@ -49,7 +49,7 @@ module.exports.protect = catchAsync(async (req, res, next) => {
 	const tokenFromCookies = req.cookies?.token
 
 	const token = tokenFromHeaders || tokenFromCookies
-	if (!token) res.redirect("/auth/login")
+	if (!token) return res.redirect("/auth/login")
 
 	const { id } = jwt.verify(token, process.env.SECRET)
 	if (!id) return next(new Error("not found ID!"))
