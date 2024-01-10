@@ -44,20 +44,32 @@ module.exports.getOneMovie = catchAsync(async (req, res, next) => {
 				'country', actors.country
 			) 
 			ORDER BY actors.id
-		) AS actors_list
-	FROM
-		movies
-	LEFT JOIN
-		movie_actor ON movies.id = movie_actor.movie_id
-	LEFT JOIN
-		actors ON movie_actor.actor_id = actors.id
-	WHERE
-		movies.id = ${id};`
-	)
+		) AS actors_list,
+		JSON_ARRAYAGG(
+			JSON_OBJECT(
+				'id', comments.id,
+				'content', comments.content,
+				'username', users.username
+			)
+		) as comments
 
+		FROM
+			movies
+		LEFT JOIN
+			movie_actor ON movies.id = movie_actor.movie_id
+		LEFT JOIN
+			actors ON movie_actor.actor_id = actors.id
+		LEFT JOIN
+			comments ON comments.movie_id = movies.id
+	    LEFT JOIN 
+			users ON comments.user_id = users.id
+		WHERE
+			movies.id = ${id};`
+	)
+	console.log(req.user)
 	if (!movie || !movie.title) return next(new Error("Not Found any movies!"))
 
-	res.status(200).json({ data: movie })
+	res.status(200).json({ data: movie, user: req.user })
 })
 
 module.exports.findMovie = catchAsync(async (req, res, next) => {
@@ -110,11 +122,12 @@ module.exports.getMovieActors = catchAsync(async (req, res, next) => {
 	const [result, error] = await db._executeQuery(
 		`SELECT movies.title, movie_actor.actor_id, actors.name, actors.country, movie_actor.id as entry_id, actors.birth FROM movies
 		 JOIN movie_actor ON movies.id = movie_actor.movie_id
-		 JOIN actors ON actors.id = movie_actor.actor_id 
+		 JOIN actors ON actors.id = movie_actor.actor_id
 		 WHERE movies.id=${id}
 		 ORDER BY actors.id
 		 `
 	)
+	console.log(result)
 	const title = result[0].title
 	const actors = result.map(actor => {
 		return {

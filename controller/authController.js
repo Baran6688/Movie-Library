@@ -55,6 +55,6 @@ module.exports.protect = catchAsync(async (req, res, next) => {
 	if (!id) return next(new Error("not found ID!"))
 	const [[user], error] = await db.find("users", `id='${id}'`)
 	if (!user) return next(new Error("User does not exist!"))
-	req.user = user
+	req.user = { username: user.username, id: user.id }
 	next()
 })

@@ -24,6 +24,12 @@
             </section>
         </div>
         <button id="deletebtn">Delete</button>
+
+        <section>
+            <h2>Comments</h2>
+            <ul id="commentList">
+            </ul>
+        </section>
     </main>
 
 
@@ -42,7 +48,7 @@
                 deleteBtn.setAttribute("hidden", true)
                 return
             }
-            const { data } = await res.json()
+            const { data, user } = await res.json()
             main.innerHTML = `
             <h1>${data.title}</h1>
             <h2>Directed By:${data.director}</h2>
@@ -58,6 +64,13 @@
             const actors = JSON.parse(data.actors_list)
             const list = document.getElementById("list")
             actors.forEach(el => { list.innerHTML += `<li>${el.name} from ${el.country} </li>` });
+            const comments = JSON.parse(data.comments)
+            const commentList = document.getElementById("commentList")
+            comments.forEach(el => {
+                if (el.username === user.username) return commentList.innerHTML += `<li>you said "${el.content}" </li>`
+
+                commentList.innerHTML += `<li>${el.username} says "${el.content}"</li>`
+            })
         }
 
         getMovie()
