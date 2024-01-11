@@ -29,6 +29,7 @@ main {
 	/* justify-content: center; */
 	height: 100%;
 	gap: 10px;
+	overflow: scroll;
 }
 
 button,

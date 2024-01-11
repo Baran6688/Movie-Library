@@ -44,6 +44,10 @@ module.exports.login = catchAsync(async (req, res, next) => {
 	generateAndSendToken(user.id, res)
 })
 
+module.exports.currentUser = catchAsync(async (req, res, next) => {
+	res.status(200).json({ user: req.user })
+})
+
 module.exports.protect = catchAsync(async (req, res, next) => {
 	const tokenFromHeaders = req.headers?.authorization?.split(" ")[1]
 	const tokenFromCookies = req.cookies?.token

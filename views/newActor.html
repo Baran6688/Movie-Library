@@ -49,7 +49,6 @@
                 body: JSON.stringify(formData)
             })
             if (!res.ok) window.location = "/actors/new"
-            const data = await res.json()
             const { id } = await res.json()
             window.location.href = `/actors/${id}`;
         }
