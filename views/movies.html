@@ -6,43 +6,48 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movies</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/pages/movies.css">
+
 </head>
 
+
 <body>
-    <h1>Welcome!</h1>
-    <form id="searchForm">
-        <label for="searchInput">Search:</label>
-        <input type="text" id="searchInput" placeholder="search by title, director, year" onchange="onSubmit()">
-        <button>Submit</button>
-        <button hidden type="reset" id="resetBtn">reset</button>
-    </form>
+    <!-- Navbar -->
+    <script src="./layout/navbar.js"></script>
+
+
     <main>
-        <span>
-            to add new movie
-            <a href="/movies/new">click here</a>
-        </span>
-        <table border="1" style="border-collapse: collapse;">
-            <thead>
-                <th>id</th>
-                <th>title</th>
-                <th>director</th>
-                <th>release year</th>
-                <th>link</th>
-            </thead>
-            <tbody id="moviesList">
-            </tbody>
-        </table>
+
+        <h1>Movies!</h1>
+        <form id="searchForm">
+            <div id="searchInputContainer">
+                <input type="text" id="searchInput"
+                    placeholder="  Search for movies by title, director, year and actor name">
+                <div id="searchButtons">
+                    <button hidden type="reset" id="resetBtn">reset</button>
+                    <button>Submit</button>
+                </div>
+            </div>
+        </form>
+        <div class="listContainer">
+            <ul id="moviesList">
+            </ul>
+        </div>
+
+
 
     </main>
+    <!-- Footer -->
+    <script src="./layout/footer.js"></script>
 
 
-
-
+    <!-- Scripts -->
     <script>
         const moviesList = document.getElementById("moviesList")
         const searchForm = document.getElementById("searchForm")
         const resetBtn = document.getElementById("resetBtn")
-
+        const table = document.querySelector("table")
 
 
 
@@ -64,22 +69,22 @@
         }
 
         //      =====================================================
-
+        getMovies()
         async function getMovies(url = "/api/movies") {
             const res = await fetch(url);
             const { data } = await res.json();
+            if (data.length === 0) {
+                moviesList.innerHTML = "<span>Sorry, movie not found ):</span>"
+                return
+            }
             moviesList.innerHTML = ""
             data?.forEach(el => {
-                moviesList.innerHTML += `<tr>
-                    <td>${el.id}</td>
-                    <td>${el.title}</td>
-                    <td>${el.director}</td>
-                    <td>${el.release_year}</td>
-                    <td><a href="/movies/${el.id}">Open</a></td>
-                    </tr>`;
+                moviesList.innerHTML +=
+                    `<li id='movieItem'>
+                    <a href="/movies/${el.id}">${el.title}</a> </br> <small>directed by ${el.director} <br> <b> in ${el.release_year} </b></small>  
+                    </li>`
             });
         }
-        getMovies()
     </script>
 </body>
 

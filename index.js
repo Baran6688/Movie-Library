@@ -14,6 +14,9 @@ const moviesApi = require("./api/moviesApi")
 const actorRoutes = require("./routes/actorRoutes")
 const actorApi = require("./api/actorApi")
 
+// serving static files
+app.use(express.static("public"))
+
 // Middleware
 app.use((req, res, next) => {
 	console.log(req.method, req.path)
