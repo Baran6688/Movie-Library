@@ -52,7 +52,9 @@ app.use("/actors", actorRoutes)
 
 // Catch all Undefined Routes
 app.get("*", (req, res, next) => {
-	res.send("<h1>Route not defined! </h1>")
+	res.send(`<h1>Route not defined! </h1>
+		<a href="/movies">Go Back to Home</a>
+	`)
 })
 
 // Catch all errors
