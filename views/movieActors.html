@@ -6,40 +6,48 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actors</title>
+    <link rel="stylesheet" href="/styles.css">
+
 </head>
 
 <body>
-    <h1 id="head">Actors</h1>
+    <script src="/layout/navbar.js"></script>
 
-    <form id="newForm">
-        <span id="errorm" hidden>Sorry, cannot add the actor!</span>
-        <br>
-        <label>Add actor</label>
-        <input type="text" placeholder="write actor id here" id="newActor">
-        <button>Submit</button>
-    </form>
-    <hr>
+    <main>
 
-    <table border=1 style="border-collapse: collapse;">
-        <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Birth</th>
-            <th>Country</th>
-            <th>EID</th>
-        </thead>
-        <tbody id="rows">
+        <h1 id="head">Actors</h1>
 
-        </tbody>
+        <form id="newForm">
+            <span id="errorm" hidden>Sorry, cannot add the actor!</span>
+            <br>
+            <label>Add actor</label>
+            <input type="text" placeholder="write actor id here" id="newActor">
+            <button>Submit</button>
+        </form>
+        <hr>
 
-    </table>
+        <table border=1 style="border-collapse: collapse;">
+            <thead>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Birth</th>
+                <th>Country</th>
+                <th>EID</th>
+            </thead>
+            <tbody id="rows">
 
+            </tbody>
+
+        </table>
+
+    </main>
+    <script src="/layout/footer.js"></script>
 
 </body>
 
 <script>
     const actorRows = document.getElementById("rows")
-    const head = document.getElementById("head")
+    const header = document.getElementById("head")
     const movieId = window.location.pathname.split('/').at(-2)
     const actorForm = document.getElementById("newForm")
     const errorm = document.getElementById("errorm")
@@ -64,9 +72,9 @@
 
     async function getActors() {
         const res = await fetch(`/api/movies/${movieId}/actors`)
-        if (!res.ok) return head.innerText = "Movie Not Found!"
+        if (!res.ok) return header.innerText = "Movie Not Found!"
         const { title, actors } = await res.json()
-        head.innerText += " from " + title
+        header.innerText += " from " + title
         actors?.forEach(actor => {
             actorRows.innerHTML += `
             <tr>
