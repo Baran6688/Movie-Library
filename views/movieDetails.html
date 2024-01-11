@@ -4,49 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/pages/movieDetails.css">
 </head>
 
 <body>
+    <!-- Navbar -->
+    <script src="/layout/navbar.js"></script>
+
     <span id="message" hidden>Not Found Movie!</span>
     <main id="main">
         <div id="filmDiv">
             <h1></h1>
             <h2>Directed By:</h2>
             <p>Description:</p>
-            <section>
+            <section id="actors-section">
                 <span>Actors</span>
                 <p></p>
             </section>
+            <button id="deletebtn">Delete</button>
+
         </div>
 
 
-        <section>
-            <div id="likesBox">
-                <button>Like</button>
-                <span>thies movie has _ likes</span>
-            </div>
-        </section>
-        <button id="deletebtn">Delete</button>
-        <section>
+        <div id="likesBox">
+            <button>Like</button>
+            <span>thies movie has _ likes</span>
+        </div>
+        <section id="comments">
 
             <h2>Comments</h2>
             <label for="">Write a comment:</label>
-            <input type="text" placeholder="content" name="content" id="content">
-            <button id="commentSubmit">submit</button>
+            <div>
+                <input type="text" placeholder="content" name="content" id="content">
+                <button id="commentSubmit">submit</button>
+            </div>
             <ul id="commentList">
             </ul>
         </section>
 
+
+
     </main>
+    <script src="/layout/footer.js"></script>
 
 
 
     <script>
         const movieId = window.location.pathname.split('/').at(-1)
         const message = document.getElementById("message")
-        const main = document.getElementById("main")
+        const main = document.querySelector("main")
         const deleteBtn = document.getElementById("deletebtn")
         const filmDiv = document.getElementById("filmDiv")
         const commentList = document.getElementById("commentList")
@@ -71,12 +80,17 @@
             <h2>Directed By:${data.director}</h2>
             <p>Description:${data.description}</p>
             <span>Genre: ${data.genre}</span>
-            <section>
+            <section id="actorSection">
                 Actors:
                 <ul id='actorList'></ul>
             </section>
-            <a href="/movies/${movieId}/actors" >Manage Actors</a>
-            <a href="/movies/update/${movieId}">Update Movie!</a>
+            
+            <div>
+                <button id="deletebtn">Delete</button>
+                <a href="/movies/${movieId}/actors" class="button" >Manage Actors</a>
+                <a href="/movies/update/${movieId}"  class="button" >Update Movie!</a>
+                
+            </div>
             `
             const actors = JSON.parse(data.actors_list)
             const list = document.getElementById("actorList")
@@ -102,6 +116,7 @@
         // Rendering Comments Trigger
         function renderComments(comments, user) {
             comments?.forEach(el => {
+                console.log(el)
                 if (!el.username) return
                 if (el.user_id === user.id)
                     return commentList.innerHTML += `<li>you said "${el.content}" <button onclick="onDeleteComment(${el.id})">Delete</button> </li>`

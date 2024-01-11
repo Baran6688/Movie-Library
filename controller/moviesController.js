@@ -192,7 +192,8 @@ module.exports.addCommentToMovie = catchAsync(async (req, res, next) => {
 
 module.exports.deleteComment = catchAsync(async (req, res, next) => {
 	const { id } = req.params
-	const [[comment], error] = await db.find("comments", id)
+	const [[comment], error] = await db.find("comments", `id=${id}`)
+	console.log(comment, "  ", req.user)
 	if (comment.user_id !== req.user.id) return next(new Error("Not Authorized"))
 	const result = await db.deleteOne("comments", comment.id)
 	res.status(200).json({ data: "OK" })
