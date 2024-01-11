@@ -6,12 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actor</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/pages/actorProfile.css">
+
+
 </head>
 
 <body>
-    <span id="message" hidden>Not Found Movie!</span>
+    <script src="/layout/navbar.js"></script>
+
+    <span id="message" hidden>Not Found Actor!</span>
     <main id="main">
-        <div id="filmDiv">
+        <div id="actorDiv">
             <h1></h1>
             <h2>Directed By:</h2>
             <p>Description:</p>
@@ -22,69 +28,71 @@
         </div>
 
 
-        <button id="deletebtn" onclick="deleteActor()">Delete</button>
 
     </main>
+    <script src="/layout/footer.js"></script>
+    <script>
+
+
+        // First Page Opened
+        const actorId = window.location.pathname.split('/').at(-1)
+        const message = document.getElementById("message")
+        const main = document.getElementById("main")
+        const deleteBtn = document.getElementById("deletebtn")
+        const actorDiv = document.getElementById("actorDiv")
+        getMovie()
+
+        async function getMovie() {
+            const res = await fetch("/api/actors/" + actorId)
+            if (!res.ok) {
+                message.removeAttribute("hidden")
+                main.setAttribute("hidden", true)
+                deleteBtn.setAttribute("hidden", true)
+                return
+            }
+
+            const { data } = await res.json()
+            actorDiv.innerHTML = `
+                <h1>${data.name}</h1>
+                <h2>Nation:${data.country}</h2>
+                <p>Birth:${new Date(data.birth).toLocaleDateString()}</p>
+                <section>
+                    Movies:
+                    <ul id='movieList'></ul>
+                </section>
+                <button id="deletebtn" onclick="deleteActor()">Delete</button>
+                `
+
+        }
+
+        // The Actor Movies
+        fetchMovies()
+
+        async function fetchMovies() {
+            const res = await fetch(`/api/actors/${actorId}/movies`)
+            const { data } = await res.json()
+            const movieList = document.getElementById("movieList")
+
+            data.forEach(movie => {
+                movieList.innerHTML += `
+                <li> <a href="/movies/${movie.movie_id}"> ${movie.title} </a> </li>
+                `
+            });
+        }
+
+
+        async function deleteActor() {
+            const res = await fetch(`/api/actors/${actorId}`, { method: "DELETE" })
+            if (res.ok) window.location = "/actors"
+        }
+
+
+
+
+    </script>
+
 </body>
 
 
-<script>
-
-
-    // First Page Opened
-    const actorId = window.location.pathname.split('/').at(-1)
-    const message = document.getElementById("message")
-    const main = document.getElementById("main")
-    const deleteBtn = document.getElementById("deletebtn")
-    const filmDiv = document.getElementById("filmDiv")
-    getMovie()
-
-    async function getMovie() {
-        const res = await fetch("/api/actors/" + actorId)
-        if (!res.ok) {
-            message.removeAttribute("hidden")
-            main.setAttribute("hidden", true)
-            deleteBtn.setAttribute("hidden", true)
-            return
-        }
-
-        const { data } = await res.json()
-        filmDiv.innerHTML = `
-            <h1>${data.name}</h1>
-            <h2>Nation:${data.country}</h2>
-            <p>Birth:${new Date(data.birth).toLocaleDateString()}</p>
-            <section>
-                Movies:
-                <ul id='movieList'></ul>
-            </section>
-            `
-
-    }
-
-    // The Actor Movies
-    fetchMovies()
-
-    async function fetchMovies() {
-        const res = await fetch(`/api/actors/${actorId}/movies`)
-        const { data } = await res.json()
-        const movieList = document.getElementById("movieList")
-
-        data.forEach(movie => {
-            movieList.innerHTML += `
-            <li> <a href="/movies/${movie.movie_id}"> ${movie.title} </a> </li>
-            `
-        });
-    }
-
-
-    async function deleteActor() {
-        const res = await fetch(`/api/actors/${actorId}`, { method: "DELETE" })
-        if (res.ok) window.location = "/actors"
-    }
-
-
-
-
-</script>
 
 </html>

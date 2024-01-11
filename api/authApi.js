@@ -5,11 +5,13 @@ const {
 	login,
 	protect,
 	currentUser,
+	logout,
 } = require("../controller/authController")
 
 // API Routes
 router.post("/login", login)
 router.post("/register", register)
+router.get("/logout", logout)
 
 // Current User Check
 router.get("/", protect, currentUser)

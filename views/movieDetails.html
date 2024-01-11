@@ -116,7 +116,6 @@
         // Rendering Comments Trigger
         function renderComments(comments, user) {
             comments?.forEach(el => {
-                console.log(el)
                 if (!el.username) return
                 if (el.user_id === user.id)
                     return commentList.innerHTML += `<li>you said "${el.content}" <button onclick="onDeleteComment(${el.id})">Delete</button> </li>`

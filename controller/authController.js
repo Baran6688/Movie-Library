@@ -62,3 +62,8 @@ module.exports.protect = catchAsync(async (req, res, next) => {
 	req.user = { username: user.username, id: user.id }
 	next()
 })
+
+module.exports.logout = (req, res) => {
+	res.clearCookie("token")
+	res.status(200).json({ message: "DONE" })
+}

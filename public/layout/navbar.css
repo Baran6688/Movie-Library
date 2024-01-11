@@ -11,10 +11,8 @@
 	align-items: center;
 	transition: all ease-in-out 100ms;
 	padding-inline: 1rem;
-	color: white;
 }
 .navlinks > li:hover {
-	color: rgb(50, 50, 50);
 	background-color: rgb(205, 206, 206);
 }
 
@@ -29,4 +27,12 @@ nav {
 	background-color: #333;
 	box-shadow: black 2rem inset;
 	box-shadow: 0px 8px 10px #88888897;
+}
+
+.navlink {
+	color: white;
+	cursor: pointer;
+}
+.navlink:hover {
+	color: rgb(50, 50, 50);
 }
